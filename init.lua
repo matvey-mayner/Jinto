@@ -81,7 +81,6 @@ end
 local function boot()
     clear()
     write(2, 2, "System booting...")
-    os.sleep(0.05)
     dofile("/System/MainSYS.lua")
 
     if not computer.getBootAddress() then
