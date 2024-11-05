@@ -175,26 +175,45 @@ local function run(path)
     end
 end
 
-local function apt(name)
-    local internet = component.list("internet")()
-    if not internet then
-        write(1, 15, "Error: Internet card not found")
+local function apt(url)
+    -- Check for the internet card
+    local internet_address = component.list("internet")()
+    if not internet_address then
+        write("Error: Internet card not found\n")
         return
     end
-    local inet = component.proxy(internet)
+    
+    local inet = component.proxy(internet_address)
+    
+    -- Make the request to the URL
     local handle, err = inet.request(url)
     if not handle then
-        write(1, 15, "Error: " .. err)
+        write("Error: " .. tostring(err) .. "\n")
         return
     end
 
-    local filename = url:match("[^/]+$")  -- Имя файла из URL
-    local file = fs.open(filename, "w")
+    -- Extract the filename from the URL
+    local filename = url:match("/([^/]+)$")  -- Match the last segment after the last '/'
+    if not filename then
+        write("Error: Could not determine filename from URL\n")
+        return
+    end
+
+    -- Open a file for writing
+    local file = fs.open(filename, "w") -- Open file in write mode
+    if not file then
+        write("Error opening file\n")
+        return
+    end
+
+    -- Write the data to the file
     for chunk in handle do
         fs.write(file, chunk)
     end
+    
+    -- Close the file
     fs.close(file)
-    write(1, 15, "Downloaded: " .. filename)
+    write("Downloaded: " .. filename .. "\n")
 end
 
 local function executeCommand(command)
