@@ -125,21 +125,6 @@ local function apt(url)
         return
     end
 
-    -- Чтение заголовков
-    local responseHeaders = {}
-    for line in handle do
-        if line == "" then break end  -- Пустая строка отделяет заголовки от тела
-        table.insert(responseHeaders, line)
-    end
-
-    -- Получаем статус ответа
-    local statusLine = responseHeaders[1] or ""
-    local statusCode = statusLine:match("HTTP/%d%.%d (%d+)")  -- Получаем код статуса
-    if statusCode ~= "200" then
-        write(1, 15, "Error: Server returned status " .. statusCode .. "\n")
-        return
-    end
-
     local filename = url:match("/([^/]+)$")
     if not filename then
         write(1, 15, "Error: Could not determine filename from URL\n")
@@ -153,13 +138,15 @@ local function apt(url)
     end
 
     local totalBytes = 0
-    -- Сохраняем данные
-    for chunk in handle do
+    while true do
+        local chunk = handle.read(1024)  -- Читаем 1024 байта за раз
+        if not chunk then break end  -- Если нет больше данных, выходим из цикла
         fs.write(file, chunk)
         totalBytes = totalBytes + #chunk
     end
     
     fs.close(file)
+    handle.close()  -- Закрываем поток после использования
     write(1, 1, "Downloaded: " .. filename .. " (" .. totalBytes .. " bytes)\n")
 end
 
