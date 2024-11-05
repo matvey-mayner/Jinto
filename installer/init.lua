@@ -125,8 +125,6 @@ local function getInternetFile(url)
                 end
             end
         end
-    else
-        return nil, "unvalid address"
     end
 end
 
