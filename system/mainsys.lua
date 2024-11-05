@@ -8,6 +8,7 @@ gpu.bind(screen)
 gpu.setResolution(50, 16)  -- Set screen resolution
 
 local currentDir = "/"
+local hostapt = "http://83.25.177.183/package-host/packages/"
 
 local function clear()
     gpu.fill(1, 1, 50, 16, " ")
@@ -174,7 +175,7 @@ local function run(path)
     end
 end
 
-local function apt(url)
+local function apt(name)
     local internet = component.list("internet")()
     if not internet then
         write(1, 15, "Error: Internet card not found")
@@ -228,7 +229,7 @@ local function executeCommand(command)
     elseif args[1] == "run" and args[2] then
         run(args[2])
     elseif args[1] == "apt" and args[2] == "install" and args[3] then
-        apt(args[3])
+        apt(hostapt/args[3])
     else
         local success, err = pcall(function()
             local result = load(command)
