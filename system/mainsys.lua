@@ -127,7 +127,7 @@ local function apt(url)
         return
     end
 
-    local filename = url:match("/([^/]+)$")
+    local filename = url:match("/system/bin/([^/]+)$")
     if not filename then
         write(1, 15, "Error: Could not determine filename from URL\n")
         return
