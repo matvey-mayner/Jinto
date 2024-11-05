@@ -10,7 +10,7 @@ gpu.setResolution(50, 16)  -- Set screen resolution
 local currentDir = "/"
 local hostapt = "http://83.25.177.183/package-host/packages/"
 
-local function readFile(path)
+function readFile(path)
     local drive = component.proxy(computer.getBootAddress())
     local handle, reason = drive.open(path, "r")
     if not handle then
@@ -27,7 +27,7 @@ local function readFile(path)
     return content
 end
 
-local function dofile(path)
+function dofile(path)
     local program, reason = readFile(path)
     if not program then
         error("Error loading file " .. path .. ": " .. reason)
