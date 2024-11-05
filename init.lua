@@ -81,7 +81,7 @@ end
 local function boot()
     clear()
     write(2, 2, "System booting...")
-    dofile("/System/MainSYS.lua")
+    dofile("/system/mainsys.lua")
 
     if not computer.getBootAddress() then
         write(2, 4, "No boot drive address found.")
