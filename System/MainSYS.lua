@@ -60,6 +60,10 @@ local function ls()
     end
 end
 
+local function title()
+    write(1, 1, "Welcome To Jinto !")
+end
+
 local function cd(path)
     local newPath = resolvePath(path)
     if fs.isDirectory(newPath) then
@@ -164,6 +168,7 @@ local function executeCommand(command)
 
     if args[1] == "cls" then
         clear()
+        title()
     elseif args[1] == "ls" then
         ls()
     elseif args[1] == "cd" and args[2] then
@@ -197,7 +202,7 @@ end
 
 local function shell()
     clear()
-    write(1, 1, "Welcome To Jinto !")
+    title()
 
     while true do
         write(1, 16, "> ")
