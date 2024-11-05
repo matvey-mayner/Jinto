@@ -1,4 +1,4 @@
--- Version 1.4.1
+-- Version 1.4.2
 local component = component
 local computer = computer
 local fs = component.proxy(computer.getBootAddress())
@@ -49,17 +49,14 @@ local function resolvePath(path)
     end
 end
 
-local function listDisks()
-    local y = 2
-    for address in component.list("filesystem") do
-        local proxy = component.proxy(address)
-        write(1, y, "Disk: " .. address:sub(1, 8))
+local success, iterator = pcall(proxy.list, proxy, "/")
+if success and type(iterator) == "function" then
+    for file in iterator do
+        write(1, y, " - " .. file)
         y = y + 1
-        for file in proxy.list("/") do  -- Используем итератор напрямую
-            write(1, y, " - " .. file)
-            y = y + 1
-        end
     end
+else
+    write(1, y, "Error accessing disk or `list` failed")
 end
 
 local function ls()
@@ -176,7 +173,6 @@ local function run(path)
 end
 
 local function apt(url)
-    -- Check for the internet card
     local internet_address = component.list("internet")()
     if not internet_address then
         write("Error: Internet card not found\n")
@@ -185,33 +181,28 @@ local function apt(url)
     
     local inet = component.proxy(internet_address)
     
-    -- Make the request to the URL
     local handle, err = inet.request(url)
     if not handle then
         write("Error: " .. tostring(err) .. "\n")
         return
     end
 
-    -- Extract the filename from the URL
-    local filename = url:match("/([^/]+)$")  -- Match the last segment after the last '/'
+    local filename = url:match("/([^/]+)$")
     if not filename then
         write("Error: Could not determine filename from URL\n")
         return
     end
 
-    -- Open a file for writing
-    local file = fs.open(filename, "w") -- Open file in write mode
+    local file = fs.open(filename, "w")
     if not file then
         write("Error opening file\n")
         return
     end
 
-    -- Write the data to the file
     for chunk in handle do
         fs.write(file, chunk)
     end
     
-    -- Close the file
     fs.close(file)
     write("Downloaded: " .. filename .. "\n")
 end
