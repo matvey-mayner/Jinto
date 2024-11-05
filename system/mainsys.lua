@@ -342,6 +342,8 @@ local function executeCommand(command)
         else
             ls()
         end
+    elseif args[1] == "rm" and args[2] then
+        rm(args[2])
     else
         require("/system/bin/".. args[1]).run(args)
     end
