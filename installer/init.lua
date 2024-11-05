@@ -258,7 +258,7 @@ local function selectDist(dists)
 end
 
 local function download(url, targetDrive)
-    local filelist = split(assert(getInternetFile(url .. "/installer/filelist.txt")), "\n")
+    local filelist = split(assert(getInternetFile(url .. "/installer/list.txt")), "\n")
 
     for i, path in ipairs(filelist) do
         if path ~= "" then
