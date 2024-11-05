@@ -338,7 +338,7 @@ local function executeCommand(command)
         apt(sysupdate)
     else
         local success, err = pcall(function()
-            dofile(command)
+            run("/system/bin/".. command)
         end)
         if not success then
             write(1, 15, "Error: " .. err)
