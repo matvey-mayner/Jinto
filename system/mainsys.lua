@@ -318,7 +318,7 @@ local function executeCommand(command)
             ls()
         end
     else
-        require("/bin/".. args[1]).run(args)
+        require("/system/bin/".. args[1]).run(args)
     end
 end
 
