@@ -127,12 +127,12 @@ local function apt(url)
         return
     end
 
-    local filename = url:match("/system/bin/([^/]+)$")
+    local filename = url:match("/([^/]+)$")
     if not filename then
         write(1, 15, "Error: Could not determine filename from URL\n")
         return
     end
-
+    filename = "/system/bin/".. filename
     local file = fs.open(filename, "w")
     if not file then
         write(1, 15, "Error opening file\n")
