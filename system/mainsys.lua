@@ -1,4 +1,4 @@
--- Version 1.4.2
+-- Version 1.5
 local component = component
 local computer = computer
 local fs = component.proxy(computer.getBootAddress())
@@ -188,9 +188,40 @@ end
 local function apt(url)
     local internet_address = component.list("internet")()
     if not internet_address then
-        write("Error: Internet card not found\n")
+        write(1, 15, "Error: Internet card not found\n")
         return
     end
+    
+    local inet = component.proxy(internet_address)
+    
+    local handle, err = inet.request(url)
+    if not handle then
+        write(1, 15, "Error: " .. tostring(err) .. "\n")
+        return
+    end
+
+    local filename = url:match("/([^/]+)$")
+    if not filename then
+        write(1, 15, "Error: Could not determine filename from URL\n")
+        return
+    end
+
+    local file = fs.open(filename, "w")
+    if not file then
+        write(1, 15, "Error opening file\n")
+        return
+    end
+
+    -- Читаем данные из потока и записываем в файл
+    local totalBytes = 0
+    for chunk in handle do
+        fs.write(file, chunk)
+        totalBytes = totalBytes + #chunk
+    end
+    
+    fs.close(file)
+    write(1, 1, "Downloaded: " .. filename .. " (" .. totalBytes .. " bytes)\n")
+end
     
     local inet = component.proxy(internet_address)
     
