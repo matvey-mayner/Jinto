@@ -111,6 +111,7 @@ local function title()
 end
 
 local function apt(url)
+
     local internet_address = component.list("internet")()
     if not internet_address then
         write(1, 15, "Error: Internet card not found\n")
@@ -119,7 +120,7 @@ local function apt(url)
     
     local inet = component.proxy(internet_address)
     
-    local handle, err = inet.request(url)
+    local handle, err = inet.request(url.. ".lua")
     if not handle then
         write(1, 15, "Error: " .. tostring(err) .. "\n")
         return
@@ -257,7 +258,7 @@ local function executeCommand(command)
     elseif args[1] == "run" and args[2] then
         run(args[2])
     elseif args[1] == "apt" and args[2] == "install" and args[3] then
-        apt(hostapt.. args[3].. ".lua")
+        apt(hostapt.. args[3])
     else
         local success, err = pcall(function()
             local result = load(command)
