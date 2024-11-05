@@ -1,4 +1,4 @@
--- Version 1.5
+-- Version 1.5.1
 local component = component
 local computer = computer
 local fs = component.proxy(computer.getBootAddress())
@@ -256,7 +256,7 @@ local function run(path)
 
         local content = ""
         repeat
-            local chunk = fs.read(handle, math.huge)
+            local chunk = fs.read(handle, math.huge)  -- Читаем весь файл за один раз
             if chunk then
                 content = content .. chunk
             end
