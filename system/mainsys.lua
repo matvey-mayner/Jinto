@@ -317,32 +317,8 @@ local function executeCommand(command)
         else
             ls()
         end
-    elseif args[1] == "cd" and args[2] then
-        cd(args[2])
-    elseif args[1] == "rm" and args[2] then
-        rm(args[2])
-    elseif args[1] == "mkdir" and args[2] then
-        mkdir(args[2])
-    elseif args[1] == "shutdown" then
-        shutdown()
-    elseif args[1] == "reboot" then
-        reboot()
-    elseif args[1] == "cat" and args[2] then
-        cat(args[2])
-    elseif args[1] == "edit" and args[2] then
-        edit(args[2])
-    elseif args[1] == "apt" and args[3] then
-        if args[2] == "install" then
-            apt(hostapt.. args[3])
-    elseif args[1] == "update" then
-        apt(sysupdate)
     else
-        local success, err = pcall(function()
-            dofile(command)
-        end)
-        if not success then
-            write(1, 15, "Error: " .. err)
-        end
+        require("/bin/".. args[1]).run(args)
     end
 end
 
