@@ -48,11 +48,15 @@ local function resolvePath(path)
 end
 
 local function ls()
-    local items = fs.list(currentDir)
-    local y = 2
-    for item in items do
-        write(1, y, item)
-        y = y + 1
+    if fs.isDirectory(currentDir) then
+        local items = fs.list(currentDir)  -- Получаем список файлов как таблицу
+        local y = 2
+        for _, item in ipairs(items) do  -- Проходим по таблице
+            write(1, y, item)
+            y = y + 1
+        end
+    else
+        write(1, 15, "Error: Not a directory")
     end
 end
 
