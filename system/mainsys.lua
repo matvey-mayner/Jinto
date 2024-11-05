@@ -248,14 +248,29 @@ end
 local function run(path)
     local fullPath = resolvePath(path)
     if fs.exists(fullPath) then
-        local program, err = loadfile(fullPath)
+        local handle, err = fs.open(fullPath, "r")
+        if not handle then
+            write(1, 15, "Error: Could not open file - " .. err .. "\n")
+            return
+        end
+
+        local content = ""
+        repeat
+            local chunk = fs.read(handle, math.huge)
+            if chunk then
+                content = content .. chunk
+            end
+        until not chunk
+        fs.close(handle)
+
+        local program, loadErr = load(content, "=" .. path)
         if program then
             local success, execErr = pcall(program)
             if not success then
                 write(1, 15, "Execution error: " .. execErr .. "\n")
             end
         else
-            write(1, 15, "Load error: " .. err .. "\n")
+            write(1, 15, "Load error: " .. loadErr .. "\n")
         end
     else
         write(1, 15, "Error: File not found\n")
