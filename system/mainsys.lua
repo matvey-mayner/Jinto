@@ -56,8 +56,13 @@ local function listDisks()
         if proxy then
             write(1, y, "Disk: " .. address:sub(1, 8))
             y = y + 1
-            for file in proxy.list("/") do
-                write(1, y, " - " .. file)
+            if type(proxy.list) == "function" then
+                for file in proxy.list("/") do
+                    write(1, y, " - " .. file)
+                    y = y + 1
+                end
+            else
+                write(1, y, "Error: `list` is not a function")
                 y = y + 1
             end
         else
