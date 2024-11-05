@@ -248,17 +248,17 @@ end
 local function run(path)
     local fullPath = resolvePath(path)
     if fs.exists(fullPath) then
-        local program, err = dofile(fullPath)
+        local program, err = loadfile(fullPath)
         if program then
-            local success, err = pcall(program)
+            local success, execErr = pcall(program)
             if not success then
-                write(1, 15, "Execution error: " .. err)
+                write(1, 15, "Execution error: " .. execErr .. "\n")
             end
         else
-            write(1, 15, "Load error: " .. err)
+            write(1, 15, "Load error: " .. err .. "\n")
         end
     else
-        write(1, 15, "Error: File not found")
+        write(1, 15, "Error: File not found\n")
     end
 end
 
