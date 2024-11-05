@@ -1,4 +1,4 @@
--- Version 1.4
+-- Version 1.4.1
 local component = component
 local computer = computer
 local fs = component.proxy(computer.getBootAddress())
@@ -54,7 +54,7 @@ local function listDisks()
         local proxy = component.proxy(address)
         write(1, y, "Disk: " .. address:sub(1, 8))
         y = y + 1
-        for file in proxy.list("/") do
+        for file in proxy.list("/") do  -- Используем итератор напрямую
             write(1, y, " - " .. file)
             y = y + 1
         end
