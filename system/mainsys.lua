@@ -143,7 +143,7 @@ local function apt(url)
         fs.write(file, chunk)
         totalBytes = totalBytes + #chunk
     end
-    
+
     fs.close(file)
     handle.close()
     write(1, 1, "Downloaded: " .. filename .. " (" .. totalBytes .. " bytes)\n")
@@ -187,7 +187,7 @@ end
 local function edit(path)
     local fullPath = resolvePath(path)
     local lines = {}
-    
+
     if fs.exists(fullPath) then
         local handle = fs.open(fullPath, "r")
         repeat
@@ -358,4 +358,3 @@ local function shell()
 end
 
 shell()
-end
