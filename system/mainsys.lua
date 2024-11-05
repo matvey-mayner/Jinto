@@ -331,18 +331,14 @@ local function executeCommand(command)
         cat(args[2])
     elseif args[1] == "edit" and args[2] then
         edit(args[2])
-    elseif args[1] == "run" and args[2] then
-        run(args[2])
-    elseif args[1] == "apt" and args[2] == "install" and args[3] then
-        apt(hostapt.. args[3])
+    elseif args[1] == "apt" and args[3] then
+        if args[2] == "install" then
+            apt(hostapt.. args[3])
     elseif args[1] == "update" then
         apt(sysupdate)
     else
         local success, err = pcall(function()
-            local result = load(command)
-            if result then
-                result()
-            end
+            dofile(command)
         end)
         if not success then
             write(1, 15, "Error: " .. err)
