@@ -249,6 +249,7 @@ end
     
     fs.close(file)
     write("Downloaded: " .. filename .. "\n")
+  end
 end
 
 local function executeCommand(command)
