@@ -1,6 +1,6 @@
 -- Version 1.4.2
-local component = component
-local computer = computer
+local component = require("component")
+local computer = require("computer")
 local fs = component.proxy(computer.getBootAddress())
 local gpu = component.proxy(component.list("gpu")())
 local screen = component.list("screen")()
