@@ -8,7 +8,7 @@ gpu.bind(screen)
 gpu.setResolution(50, 16)  -- Set screen resolution
 
 local currentDir = "/"
-local hostapt = "http://83.25.177.183/package-host/packages/"
+local hostapt = "http://83.25.177.183/package-host/packages"
 
 local function clear()
     gpu.fill(1, 1, 50, 16, " ")
