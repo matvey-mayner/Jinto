@@ -272,20 +272,6 @@ local function edit(path)
     end
 end
 
-    write(1, 15, "Enter new content (end with empty line):")
-    local y = 2
-    fs.remove(fullPath)
-    local handle = fs.open(fullPath, "w")
-    while true do
-        local line = readInput("")
-        if line == "" then break end
-        fs.write(handle, line .. "\n")
-        write(1, y, line)
-        y = y + 1
-    end
-    fs.close(handle)
-end
-
 local function run(path)
     local fullPath = resolvePath(path)
     if fs.exists(fullPath) then
