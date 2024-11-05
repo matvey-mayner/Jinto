@@ -191,7 +191,6 @@ local function edit(path)
     local fullPath = resolvePath(path)
     local lines = {}
     
-    -- Проверка на существование файла и чтение содержимого
     if fs.exists(fullPath) then
         local handle = fs.open(fullPath, "r")
         repeat
@@ -263,7 +262,6 @@ local function edit(path)
                 write(1, 15, "File saved.")
                 break
             else
-                -- Добавление символа в текущую строку
                 lines[currentLine] = (lines[currentLine] or "") .. string.char(char)
                 cursorX = cursorX + 1
             end
