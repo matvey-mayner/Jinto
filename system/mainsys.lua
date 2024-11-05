@@ -338,7 +338,7 @@ local function executeCommand(command)
             apt(hostapt.. args[3], "/system/bin/")
         elseif args[2] == "set" and args[3]
             hostapt = args[3]
-        
+        end
     elseif args[1] == "update" then
         apt(sysupdate, "/system/")
     else
