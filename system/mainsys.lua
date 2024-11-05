@@ -19,6 +19,31 @@ local function write(x, y, text)
     gpu.set(x, y, text)
 end
 
+local function require(moduleName)
+    if loadedModules[moduleName] then
+        return loadedModules[moduleName]
+    end
+
+    local path = "/" .. moduleName .. ".lua"  -- Form the file path
+    local program, reason = readFile(path)
+    if not program then
+        error("Error loading module " .. moduleName .. ": " .. reason)
+    end
+
+    local module, err = load(program, "=" .. moduleName)
+    if not module then
+        error("Compilation error in module " .. moduleName .. ": " .. err)
+    end
+
+    local success, result = pcall(module)
+    if not success then
+        error("Execution error in module " .. moduleName .. ": " .. result)
+    end
+
+    loadedModules[moduleName] = result  -- Cache the module
+    return result
+end
+
 local function readInput(prompt)
     write(1, 16, prompt)
     local input = ""
