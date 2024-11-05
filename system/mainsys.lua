@@ -1,4 +1,4 @@
--- Version 1.5.1
+-- Version 1.6
 local component = component
 local computer = computer
 local fs = component.proxy(computer.getBootAddress())
@@ -340,7 +340,7 @@ local function executeCommand(command)
             hostapt = args[3]
         end
     elseif args[1] == "update" then
-        apt(sysupdate, "/system/")
+        apt(sysupdate.. args[3], "/system/")
         computer.shutdown(true)
     else
         run("/system/bin/".. command)
