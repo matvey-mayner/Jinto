@@ -336,7 +336,7 @@ local function executeCommand(command)
     elseif args[1] == "apt" and args[3] then
         if args[2] == "install" and args[3] then
             apt(hostapt.. args[3], "/system/bin/")
-        elseif args[2] == "set" and args[3]
+        elseif args[2] == "set" and args[3] then
             hostapt = args[3]
         end
     elseif args[1] == "update" then
