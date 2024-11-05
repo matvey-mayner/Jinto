@@ -137,7 +137,6 @@ local function apt(url)
         return
     end
 
-    -- Читаем данные из потока и записываем в файл
     local totalBytes = 0
     for chunk in handle do
         fs.write(file, chunk)
