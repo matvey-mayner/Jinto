@@ -9,42 +9,7 @@ gpu.setResolution(50, 16)  -- Set screen resolution
 
 local currentDir = "/"
 local hostapt = "http://83.25.177.183/package-host/packages/"
-
-function readFile(path)
-    local drive = component.proxy(computer.getBootAddress())
-    local handle, reason = drive.open(path, "r")
-    if not handle then
-        return nil, reason
-    end
-
-    local content = ""
-    repeat
-        local chunk = drive.read(handle, math.huge)
-        content = content .. (chunk or "")
-    until not chunk
-
-    drive.close(handle)
-    return content
-end
-
-function dofile(path)
-    local program, reason = readFile(path)
-    if not program then
-        error("Error loading file " .. path .. ": " .. reason)
-    end
-
-    local chunk, err = load(program, "=" .. path)
-    if not chunk then
-        error("Compilation error in file " .. path .. ": " .. err)
-    end
-
-    local success, result = pcall(chunk)
-    if not success then
-        error("Execution error in file " .. path .. ": " .. result)
-    end
-
-    return result
-end
+local sysupdate = "http://83.25.177.183/package-host/packages/system/mainsys.lua"
 
 local function clear()
     gpu.fill(1, 1, 50, 16, " ")
@@ -224,12 +189,88 @@ end
 
 local function edit(path)
     local fullPath = resolvePath(path)
-    local content = ""
+    local lines = {}
+    
+    -- Проверка на существование файла и чтение содержимого
     if fs.exists(fullPath) then
         local handle = fs.open(fullPath, "r")
-        content = fs.read(handle, fs.size(fullPath))
+        repeat
+            local line = fs.read(handle, 64)
+            if line then
+                table.insert(lines, line)
+            end
+        until not line
         fs.close(handle)
+    else
+        write(1, 15, "Creating new file: " .. path)
     end
+
+    clear()
+    write(1, 1, "Editing: " .. path)
+    write(1, 2, "Use arrow keys to navigate. Type to edit.")
+    write(1, 3, "Press Enter to insert new line. CTRL+S to save and exit.")
+
+    local cursorX, cursorY = 1, 5
+    local currentLine = 1
+
+    local function refreshScreen()
+        clear()
+        write(1, 1, "Editing: " .. path)
+        for i = 1, math.min(#lines, 10) do
+            write(1, i + 4, lines[i] or "")
+        end
+        gpu.set(cursorX, cursorY, "_")
+    end
+
+    refreshScreen()
+
+    while true do
+        local event, _, char, code = computer.pullSignal()
+
+        if event == "key_down" then
+            if char == 13 then  -- Enter
+                table.insert(lines, currentLine + 1, "")
+                currentLine = currentLine + 1
+                cursorX, cursorY = 1, math.min(cursorY + 1, 14)
+            elseif char == 8 then  -- Backspace
+                local line = lines[currentLine]
+                if #line > 0 then
+                    lines[currentLine] = line:sub(1, -2)
+                end
+            elseif code == 200 then  -- Up arrow
+                if currentLine > 1 then
+                    currentLine = currentLine - 1
+                    cursorY = cursorY - 1
+                end
+            elseif code == 208 then  -- Down arrow
+                if currentLine < #lines then
+                    currentLine = currentLine + 1
+                    cursorY = cursorY + 1
+                end
+            elseif code == 203 then  -- Left arrow
+                if cursorX > 1 then
+                    cursorX = cursorX - 1
+                end
+            elseif code == 205 then  -- Right arrow
+                cursorX = cursorX + 1
+            elseif code == 31 then  -- CTRL+S (save)
+                fs.remove(fullPath)
+                local handle = fs.open(fullPath, "w")
+                for _, line in ipairs(lines) do
+                    fs.write(handle, line .. "\n")
+                end
+                fs.close(handle)
+                write(1, 15, "File saved.")
+                break
+            else
+                -- Добавление символа в текущую строку
+                lines[currentLine] = (lines[currentLine] or "") .. string.char(char)
+                cursorX = cursorX + 1
+            end
+            refreshScreen()
+        end
+    end
+end
 
     write(1, 15, "Enter new content (end with empty line):")
     local y = 2
@@ -310,6 +351,8 @@ local function executeCommand(command)
         run(args[2])
     elseif args[1] == "apt" and args[2] == "install" and args[3] then
         apt(hostapt.. args[3])
+    elseif args[1] == "update" then
+        apt(sysupdate)
     else
         local success, err = pcall(function()
             local result = load(command)
