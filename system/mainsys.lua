@@ -1,4 +1,4 @@
--- version 1.2
+-- Version 1.4
 local component = component
 local computer = computer
 local fs = component.proxy(computer.getBootAddress())
@@ -23,9 +23,10 @@ local function readInput(prompt)
     while true do
         local event, _, char = computer.pullSignal()
         if event == "key_down" then
-            if char == 13 then  -- Enter key
+            if char == 13 then
+                gpu.fill(#prompt + 1, 16, 50 - #prompt, 1, " ")
                 break
-            elseif char == 8 then  -- Backspace key
+            elseif char == 8 then
                 if #input > 0 then
                     input = input:sub(1, -2)
                     write(#input + #prompt, 16, " ")
@@ -47,6 +48,19 @@ local function resolvePath(path)
     end
 end
 
+local function listDisks()
+    local y = 2
+    for address in component.list("filesystem") do
+        local proxy = component.proxy(address)
+        write(1, y, "Disk: " .. address:sub(1, 8))
+        y = y + 1
+        for file in proxy.list("/") do
+            write(1, y, " - " .. file)
+            y = y + 1
+        end
+    end
+end
+
 local function ls()
     if fs.isDirectory(currentDir) then
         local items = fs.list(currentDir)  -- Получаем список файлов как таблицу
@@ -58,10 +72,6 @@ local function ls()
     else
         write(1, 15, "Error: Not a directory")
     end
-end
-
-local function title()
-    write(1, 1, "Welcome To Jinto !")
 end
 
 local function cd(path)
@@ -83,6 +93,10 @@ local function rm(path)
     else
         write(1, 15, "Error: File not found")
     end
+end
+
+local function title()
+    write(1, 1, "Welcome To Jinto!")
 end
 
 local function mkdir(path)
@@ -160,6 +174,28 @@ local function run(path)
     end
 end
 
+local function apt(url)
+    local internet = component.list("internet")()
+    if not internet then
+        write(1, 15, "Error: Internet card not found")
+        return
+    end
+    local inet = component.proxy(internet)
+    local handle, err = inet.request(url)
+    if not handle then
+        write(1, 15, "Error: " .. err)
+        return
+    end
+
+    local filename = url:match("[^/]+$")  -- Имя файла из URL
+    local file = fs.open(filename, "w")
+    for chunk in handle do
+        fs.write(file, chunk)
+    end
+    fs.close(file)
+    write(1, 15, "Downloaded: " .. filename)
+end
+
 local function executeCommand(command)
     local args = {}
     for word in command:gmatch("%S+") do
@@ -170,7 +206,11 @@ local function executeCommand(command)
         clear()
         title()
     elseif args[1] == "ls" then
-        ls()
+        if args[2] == "disks" then
+            listDisks()
+        else
+            ls()
+        end
     elseif args[1] == "cd" and args[2] then
         cd(args[2])
     elseif args[1] == "rm" and args[2] then
@@ -187,6 +227,8 @@ local function executeCommand(command)
         edit(args[2])
     elseif args[1] == "run" and args[2] then
         run(args[2])
+    elseif args[1] == "apt" and args[2] == "install" and args[3] then
+        apt(args[3])
     else
         local success, err = pcall(function()
             local result = load(command)
