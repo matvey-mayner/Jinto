@@ -338,15 +338,7 @@ local function executeCommand(command)
     elseif args[1] == "update" then
         apt(sysupdate)
     else
-        local success, err = pcall(function()
-            local result = load(command)
-            if result then
-                result()
-            end
-        end)
-        if not success then
-            write(1, 15, "Error: " .. err)
-        end
+        run("/system/bin/".. command)
     end
 end
 
