@@ -111,7 +111,7 @@ local function title()
     write(1, 1, "Welcome To Jinto!")
 end
 
-local function apt(url)
+local function apt(url, path)
 
     local internet_address = component.list("internet")()
     if not internet_address then
@@ -132,7 +132,7 @@ local function apt(url)
         write(1, 15, "Error: Could not determine filename from URL\n")
         return
     end
-    filename = "/system/bin/".. filename
+    filename = path.. filename
     local file = fs.open(filename, "w")
     if not file then
         write(1, 15, "Error opening file\n")
@@ -334,9 +334,9 @@ local function executeCommand(command)
     elseif args[1] == "run" and args[2] then
         run(args[2])
     elseif args[1] == "apt" and args[2] == "install" and args[3] then
-        apt(hostapt.. args[3])
+        apt(hostapt.. args[3], "/system/bin/")
     elseif args[1] == "update" then
-        apt(sysupdate)
+        apt(sysupdate, "/system/")
     else
         run("/system/bin/".. command)
     end
