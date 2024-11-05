@@ -1,4 +1,3 @@
--- Version 1.5.1
 local component = component
 local computer = computer
 local fs = component.proxy(computer.getBootAddress())
@@ -25,10 +24,10 @@ local function readInput(prompt)
     while true do
         local event, _, char = computer.pullSignal()
         if event == "key_down" then
-            if char == 13 then
+            if char == 13 then  -- Enter
                 gpu.fill(#prompt + 1, 16, 50 - #prompt, 1, " ")
                 break
-            elseif char == 8 then
+            elseif char == 8 then  -- Backspace
                 if #input > 0 then
                     input = input:sub(1, -2)
                     write(#input + #prompt, 16, " ")
@@ -75,9 +74,9 @@ end
 
 local function ls()
     if fs.isDirectory(currentDir) then
-        local items = fs.list(currentDir)  -- Получаем список файлов как таблицу
+        local items = fs.list(currentDir)
         local y = 2
-        for _, item in ipairs(items) do  -- Проходим по таблице
+        for _, item in ipairs(items) do
             write(1, y, item)
             y = y + 1
         end
@@ -112,16 +111,14 @@ local function title()
 end
 
 local function apt(url)
-
     local internet_address = component.list("internet")()
     if not internet_address then
         write(1, 15, "Error: Internet card not found\n")
         return
     end
-    
+
     local inet = component.proxy(internet_address)
-    
-    local handle, err = inet.request(url.. ".lua")
+    local handle, err = inet.request(url .. ".lua")
     if not handle then
         write(1, 15, "Error: " .. tostring(err) .. "\n")
         return
@@ -141,14 +138,14 @@ local function apt(url)
 
     local totalBytes = 0
     while true do
-        local chunk = handle.read(1024)  -- Читаем 1024 байта за раз
-        if not chunk then break end  -- Если нет больше данных, выходим из цикла
+        local chunk = handle.read(1024)
+        if not chunk then break end
         fs.write(file, chunk)
         totalBytes = totalBytes + #chunk
     end
     
     fs.close(file)
-    handle.close()  -- Закрываем поток после использования
+    handle.close()
     write(1, 1, "Downloaded: " .. filename .. " (" .. totalBytes .. " bytes)\n")
 end
 
@@ -281,7 +278,7 @@ local function run(path)
 
         local content = ""
         repeat
-            local chunk = fs.read(handle, math.huge)  -- Читаем весь файл за один раз
+            local chunk = fs.read(handle, math.huge)
             if chunk then
                 content = content .. chunk
             end
@@ -331,14 +328,17 @@ local function executeCommand(command)
         cat(args[2])
     elseif args[1] == "edit" and args[2] then
         edit(args[2])
-    elseif args[1] == "apt" and args[3] then
-        if args[2] == "install" then
-            apt(hostapt.. args[3])
-    elseif args[1] == "update" then
-        apt(sysupdate)
+    elseif args[1] == "apt" then
+        if args[2] == "install" and args[3] then
+            apt(hostapt .. args[3])
+        elseif args[2] == "update" then
+            apt(sysupdate)
+        else
+            write(1, 15, "Error: Invalid apt command.\n")
+        end
     else
         local success, err = pcall(function()
-            run("/system/bin/".. command)
+            run("/system/bin/" .. command)
         end)
         if not success then
             write(1, 15, "Error: " .. err)
