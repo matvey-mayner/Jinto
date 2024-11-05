@@ -10,6 +10,25 @@ gpu.setResolution(50, 16)  -- Set screen resolution
 local currentDir = "/"
 local hostapt = "http://83.25.177.183/package-host/packages/"
 
+local function dofile(path)
+    local program, reason = readFile(path)
+    if not program then
+        error("Error loading file " .. path .. ": " .. reason)
+    end
+
+    local chunk, err = load(program, "=" .. path)
+    if not chunk then
+        error("Compilation error in file " .. path .. ": " .. err)
+    end
+
+    local success, result = pcall(chunk)
+    if not success then
+        error("Execution error in file " .. path .. ": " .. result)
+    end
+
+    return result
+end
+
 local function clear()
     gpu.fill(1, 1, 50, 16, " ")
 end
@@ -212,7 +231,7 @@ end
 local function run(path)
     local fullPath = resolvePath(path)
     if fs.exists(fullPath) then
-        local program, err = loadfile(fullPath)
+        local program, err = dofile(fullPath)
         if program then
             local success, err = pcall(program)
             if not success then
