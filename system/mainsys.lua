@@ -9,7 +9,7 @@ gpu.setResolution(50, 16)  -- Set screen resolution
 
 local currentDir = "/"
 local hostapt = "http://83.25.177.183/package-host/packages/"
-local sysupdate = "https://raw.githubusercontent.com/matvey-mayner/Jinto/refs/heads/main/system/mainsys.lua"
+local sysupdate = "https://raw.githubusercontent.com/matvey-mayner/Jinto/main/system/mainsys.lua"
 
 local function clear()
     gpu.fill(1, 1, 50, 16, " ")
@@ -341,6 +341,7 @@ local function executeCommand(command)
         end
     elseif args[1] == "update" then
         apt(sysupdate, "/system/")
+        computer.shutdown(true)
     else
         run("/system/bin/".. command)
     end
