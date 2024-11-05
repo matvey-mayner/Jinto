@@ -49,14 +49,22 @@ local function resolvePath(path)
     end
 end
 
-local success, iterator = pcall(proxy.list, proxy, "/")
-if success and type(iterator) == "function" then
-    for file in iterator do
-        write(1, y, " - " .. file)
-        y = y + 1
+local function listDisks()
+    local y = 2
+    for address in component.list("filesystem") do
+        local proxy = component.proxy(address)
+        if proxy then
+            write(1, y, "Disk: " .. address:sub(1, 8))
+            y = y + 1
+            for file in proxy.list("/") do
+                write(1, y, " - " .. file)
+                y = y + 1
+            end
+        else
+            write(1, y, "Error: Unable to access filesystem at " .. address:sub(1, 8))
+            y = y + 1
+        end
     end
-else
-    write(1, y, "Error accessing disk or `list` failed")
 end
 
 local function ls()
