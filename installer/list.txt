@@ -1,3 +1,3 @@
 /init.lua
 /system/mainsys.lua
-/system/bin/apt.lua
+/system/bin/test.lua
