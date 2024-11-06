@@ -281,11 +281,10 @@ local function help()
     write(1, 7, "rm = removing file")
     write(1, 8, "edit = editing file")
     write(1, 9, "mkdir = making directory")
-    
-    write(10, 2, "apt install = installing file")
-    write(10, 3, "update = update system")
-    write(10, 4, "apt set = set apt host")
-    write(10, 5, "help = commands list")
+    write(1, 10, "apt install = installing file")
+    write(1, 11, "update = update system")
+    write(1, 12, "apt set = set apt host")
+    write(1, 13, "help = commands list")
 end
 
 local function run(path)
