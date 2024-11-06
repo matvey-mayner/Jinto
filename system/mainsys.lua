@@ -1,4 +1,4 @@
--- Version 1.6
+-- Version 1.7
 local component = component
 local computer = computer
 local fs = component.proxy(computer.getBootAddress())
@@ -270,6 +270,24 @@ local function edit(path)
     end
 end
 
+local function help()
+    clear()
+    title()
+    write(1, 2, "ls = list")
+    write(1, 3, "run = starting app")
+    write(1, 4, "cls = clear screen")
+    write(1, 5, "cd = move to directory")
+    write(1, 6, "cat = reading file")
+    write(1, 7, "rm = removing file")
+    write(1, 8, "edit = editing file")
+    write(1, 9, "mkdir = making directory")
+    
+    write(10, 2, "apt install = installing file")
+    write(10, 3, "update = update system")
+    write(10, 4, "apt set = set apt host")
+    write(10, 5, "help = commands list")
+end
+
 local function run(path)
     local fullPath = resolvePath(path)
     if fs.exists(fullPath) then
@@ -322,6 +340,8 @@ local function executeCommand(command)
             ls()
         end
     elseif args[1] == "cd" and args[2] then
+        clear()
+        title()
         cd(args[2])
     elseif args[1] == "rm" and args[2] then
         rm(args[2])
@@ -346,6 +366,8 @@ local function executeCommand(command)
     elseif args[1] == "update" then
         apt(sysupdate.. "/system/")
         computer.shutdown(true)
+        elseif args[1] == "help" then
+        help()
     else
         run("/system/bin/".. command)
     end
