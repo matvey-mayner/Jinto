@@ -313,8 +313,12 @@ local function executeCommand(command)
         title()
     elseif args[1] == "ls" then
         if args[2] == "disks" then
+            clear()
+            title()
             listDisks()
         else
+            clear()
+            title()
             ls()
         end
     elseif args[1] == "cd" and args[2] then
