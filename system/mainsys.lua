@@ -340,7 +340,7 @@ local function executeCommand(command)
             hostapt = args[3]
         end
     elseif args[1] == "update" then
-        apt(sysupdate.. args[1], "/system/")
+        apt(sysupdate.. "/system/")
         computer.shutdown(true)
     else
         run("/system/bin/".. command)
