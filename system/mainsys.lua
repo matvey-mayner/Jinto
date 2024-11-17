@@ -8,7 +8,7 @@ gpu.bind(screen)
 gpu.setResolution(50, 16)  -- Set screen resolution
 
 local currentDir = "/"
-local hostapt = "http://dandev.root.sx/package-host/packages/"
+local hostapt = "https://raw.githubusercontent.com/matvey-mayner/Jinto-APT/main/"
 local sysupdate = "https://raw.githubusercontent.com/matvey-mayner/Jinto/main/system/mainsys.lua"
 
 local function clear()
